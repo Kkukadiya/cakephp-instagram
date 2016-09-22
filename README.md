@@ -12,7 +12,7 @@ This plugin has the following requirements:
 You can install this plugin into your CakePHP application using [composer](http://getcomposer.org).
 
 ```
-composer require multidots/cakephp-mailgun
+composer require multidots/cakephp-instagram
 ```
 
 After installation, [Load the plugin](http://book.cakephp.org/3.0/en/plugins.html#loading-a-plugin)
