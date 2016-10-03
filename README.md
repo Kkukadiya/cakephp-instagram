@@ -17,7 +17,7 @@ composer require multidots/cakephp-instagram
 
 After installation, [Load the plugin](http://book.cakephp.org/3.0/en/plugins.html#loading-a-plugin)
 ```php
-Plugin::load('Instagram');
+Plugin::load('Instagram', ['bootstrap' => true]);
 ```
 Or, you can load the plugin using the shell command
 ```sh
