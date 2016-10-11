@@ -56,7 +56,7 @@ class InstagramClient
      * 
      * @var object Cake\Http\Client
      */
-    protected $_httpClient = "";
+    protected $_httpClient;
 
     /**
      * 
