@@ -2,8 +2,11 @@
 
 namespace Instagram\Utility;
 
+use BadFunctionCallException;
 use Cake\Core\Configure;
 use Cake\Http\Client;
+use Instagram\Utility\Exception\MissingAccessTokenException;
+use Instagram\Utility\Exception\MissingCredentialsException;
 
 /*
  * Instagram client
@@ -18,21 +21,21 @@ class InstagramClient
      * 
      * @var string URL
      */
-    public $apiEndpoint = "";
+    protected $_apiEndpoint = "";
 
     /**
      * Instagram API endpoint URL
      * 
      * @var string URL
      */
-    public $apiEndpointUrl = "";
+    private $_apiEndpointUrl = "";
 
     /**
      * Access token
      * 
      * @var string
      */
-    public $_accessToken = "";
+    private $_accessToken = "";
 
     /**
      * Instagram Client ID
@@ -49,6 +52,13 @@ class InstagramClient
     protected $_clientSecret = "";
 
     /**
+     * HTTP Client
+     * 
+     * @var object Cake\Http\Client
+     */
+    protected $_httpClient = "";
+
+    /**
      * 
      * The $options array accepts the following keys:
      * 
@@ -61,14 +71,16 @@ class InstagramClient
     public function __construct($options = [])
     {
         if (empty($options['clientId']) || empty($options['clientSecret'])) {
-            throw new Exception\MissingCredentialsException('Api Key or Secret is missing.');
+            throw new MissingCredentialsException('Api Key or Secret is missing.');
         }
 
         $this->_clientId = $options['clientId'];
         $this->_clientSecret = $options['clientSecret'];
 
-        $this->apiEndpoint = Configure::read('Instagram.apiEndpoint');
-        $this->apiEndpointUrl = Configure::read('Instagram.apiEndpoint') . '/' . Configure::read('Instagram.apiVersion');
+        $this->_apiEndpoint = Configure::read('Instagram.apiEndpoint');
+        $this->_apiEndpointUrl = Configure::read('Instagram.apiEndpoint') . '/' . Configure::read('Instagram.apiVersion');
+
+        $this->_httpClient = new Client();
     }
 
     /**
@@ -84,8 +96,7 @@ class InstagramClient
             return false;
         }
 
-        $http = new Client();
-        $response = $http->post($this->apiEndpoint . '/oauth/access_token', [
+        $response = $this->_httpClient->post($this->_apiEndpoint . '/oauth/access_token', [
             'client_id' => $this->_clientId,
             'client_secret' => $this->_clientSecret,
             'grant_type' => 'authorization_code',
@@ -112,6 +123,65 @@ class InstagramClient
     }
 
     /**
+     * Magic method for Instagram API based.
+     *
+     * For example: 
+     * 
+     * $instagramClient = new InstagramClient();
+     * 
+     * $instagramClient->getProfile();
+     * 
+     * $options = ['count' => '10'];
+     * $instagramClient->getMedia($options);
+     * 
+     * @param string $name Method name to use.
+     * @param array $arguments Parameters to pass when calling methods.
+     * @return mixed API Response.
+     * @throws BadFunctionCallException If method does not exist.
+     * @throws MissingAccessTokenException If access token is not set.
+     */
+    public function __call($name, $arguments = [])
+    {
+        $methodName = "__" . $name;
+        if (!method_exists($this, $methodName)) {
+            throw new BadFunctionCallException();
+        }
+
+        if (empty($this->_accessToken)) {
+            throw new MissingAccessTokenException();
+        }
+
+        return $this->$methodName($arguments);
+    }
+
+    /**
+     * Returns the user profile data
+     * 
+     * The $options array accepts the following keys:
+     * 
+     * - user_id: User id (self will be used if not set)
+     * 
+     * @param array $options List of options for this API method
+     * @return mixed API Response
+     */
+    private function __getProfile($options = [])
+    {
+        $userId = "self";
+        if (!empty($options['user_id'])) {
+            $userId = $options['user_id'];
+        }
+
+        $options = ['access_token' => $this->_accessToken];
+
+        $endpoint = $this->_apiEndpointUrl .
+                "/users/{$userId}/";
+
+        $response = $this->_httpClient->get($endpoint, $options);
+
+        return $response->body('json_decode');
+    }
+
+    /**
      * Returns recent media
      * 
      * The $options array accepts the following keys:
@@ -124,14 +194,10 @@ class InstagramClient
      * - max_id: Return media earlier than this max_ids
      * 
      * @param array $options List of options for this API method
-     * @return mixed API Response or False if no access token
+     * @return mixed API Response
      */
-    public function getMedia(array $options = [])
+    private function __getMedia($options = [])
     {
-        if (empty($this->_accessToken)) {
-            return false;
-        }
-
         $userId = "self";
         if (!empty($options['user_id'])) {
             $userId = $options['user_id'];
@@ -143,12 +209,11 @@ class InstagramClient
             $options = [];
         } else {
             $options += ['access_token' => $this->_accessToken];
-            $endpoint = $this->apiEndpointUrl .
+            $endpoint = $this->_apiEndpointUrl .
                     "/users/{$userId}/media/recent";
         }
 
-        $http = new Client();
-        $response = $http->get($endpoint, $options);
+        $response = $this->_httpClient->get($endpoint, $options);
 
         return $response->body('json_decode');
     }
