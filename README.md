@@ -21,4 +21,4 @@ Plugin::load('Instagram', ['bootstrap' => true]);
 ```
 Or, you can load the plugin using the shell command
 ```sh
-$ bin/cake plugin load Instagram
+$ bin/cake plugin load -b Instagram
