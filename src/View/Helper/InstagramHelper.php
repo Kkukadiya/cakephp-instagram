@@ -13,12 +13,11 @@ class InstagramHelper extends Helper
 
     /**
      * Returns an authentication URL
-     * 
+     *
      * @return mixed URL or false if not configured well
      */
     public function getAuthUrl()
     {
-
         if (!Configure::read('Instagram.config')) {
             return false;
         }
@@ -30,5 +29,4 @@ class InstagramHelper extends Helper
 
         return $apiEndpoint;
     }
-
 }

@@ -10,5 +10,5 @@ use RuntimeException;
  */
 class MissingAccessTokenException extends RuntimeException
 {
-    
+
 }

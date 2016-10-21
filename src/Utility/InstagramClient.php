@@ -10,7 +10,7 @@ use Instagram\Utility\Exception\MissingCredentialsException;
 
 /*
  * Instagram client
- * 
+ *
  */
 
 class InstagramClient
@@ -18,55 +18,55 @@ class InstagramClient
 
     /**
      * Instagram API endpoint
-     * 
+     *
      * @var string URL
      */
     protected $_apiEndpoint = "";
 
     /**
      * Instagram API endpoint URL
-     * 
+     *
      * @var string URL
      */
     private $_apiEndpointUrl = "";
 
     /**
      * Access token
-     * 
+     *
      * @var string
      */
     private $_accessToken = "";
 
     /**
      * Instagram Client ID
-     * 
+     *
      * @var string
      */
     protected $_clientId = "";
 
     /**
      * Instagram Client Secret
-     * 
+     *
      * @var string
      */
     protected $_clientSecret = "";
 
     /**
      * HTTP Client
-     * 
+     *
      * @var object Cake\Http\Client
      */
     protected $_httpClient;
 
     /**
-     * 
+     *
      * The $options array accepts the following keys:
-     * 
-     * - clientId: Instagram API Key 
+     *
+     * - clientId: Instagram API Key
      * - clientSecret: Instagram API Secret
      * - redirectURL: Redirect URL
-     * 
-     * @param array $options 
+     *
+     * @param array $options Options
      */
     public function __construct($options = [])
     {
@@ -85,7 +85,7 @@ class InstagramClient
 
     /**
      * Fetches oauth access token from Instagram
-     * 
+     *
      * @param string $code Access code
      * @param string $redirectUrl Auth redirection url
      * @return mixed API Response
@@ -109,7 +109,7 @@ class InstagramClient
 
     /**
      * Gets/Sets access token
-     * 
+     *
      * @param string $token Authentication token
      * @return mixes String if $token is empty, true otherwise
      */
@@ -119,21 +119,22 @@ class InstagramClient
             return $this->_accessToken;
         }
         $this->_accessToken = $token;
+
         return true;
     }
 
     /**
      * Magic method for Instagram API based.
      *
-     * For example: 
-     * 
+     * For example:
+     *
      * $instagramClient = new InstagramClient();
-     * 
+     *
      * $instagramClient->getProfile();
-     * 
+     *
      * $options = ['count' => '10'];
      * $instagramClient->getMedia($options);
-     * 
+     *
      * @param string $name Method name to use.
      * @param array $arguments Parameters to pass when calling methods.
      * @return mixed API Response.
@@ -156,11 +157,11 @@ class InstagramClient
 
     /**
      * Returns the user profile data
-     * 
+     *
      * The $options array accepts the following keys:
-     * 
+     *
      * - user_id: User id (self will be used if not set)
-     * 
+     *
      * @param array $options List of options for this API method
      * @return mixed API Response
      */
@@ -174,7 +175,7 @@ class InstagramClient
         $options = ['access_token' => $this->_accessToken];
 
         $endpoint = $this->_apiEndpointUrl .
-                "/users/{$userId}/";
+            "/users/{$userId}/";
 
         $response = $this->_httpClient->get($endpoint, $options);
 
@@ -183,16 +184,16 @@ class InstagramClient
 
     /**
      * Returns recent media
-     * 
+     *
      * The $options array accepts the following keys:
-     * 
+     *
      * - user_id: User id (self will be used if not set)
-     * - url: API url (mostly used in pagination (next_url), if set other 
+     * - url: API url (mostly used in pagination (next_url), if set other
      *   options will be ignored)
      * - count: Count of media to return
      * - min_id: Return media later than this min_id
      * - max_id: Return media earlier than this max_ids
-     * 
+     *
      * @param array $options List of options for this API method
      * @return mixed API Response
      */
@@ -210,12 +211,11 @@ class InstagramClient
         } else {
             $options += ['access_token' => $this->_accessToken];
             $endpoint = $this->_apiEndpointUrl .
-                    "/users/{$userId}/media/recent";
+                "/users/{$userId}/media/recent";
         }
 
         $response = $this->_httpClient->get($endpoint, $options);
 
         return $response->body('json_decode');
     }
-
 }
