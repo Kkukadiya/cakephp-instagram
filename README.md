@@ -1,5 +1,7 @@
 # Instagram plugin for CakePHP 3
 
+[![Build Status](https://travis-ci.org/multidots/cakephp-instagram.svg?branch=master)](https://travis-ci.org/multidots/cakephp-instagram)
+
 ## Requirements
 
 This plugin has the following requirements:
