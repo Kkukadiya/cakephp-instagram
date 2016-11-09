@@ -152,7 +152,7 @@ class InstagramClient
             throw new MissingAccessTokenException();
         }
 
-        return $this->$methodName($arguments);
+        return $this->$methodName($arguments[0]);
     }
 
     /**
