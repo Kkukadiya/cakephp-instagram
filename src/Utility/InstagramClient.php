@@ -143,7 +143,7 @@ class InstagramClient
      */
     public function __call($name, $arguments = [])
     {
-        $methodName = "__" . $name;
+        $methodName = "_" . $name;
         if (!method_exists($this, $methodName)) {
             throw new BadFunctionCallException();
         }
@@ -165,7 +165,7 @@ class InstagramClient
      * @param array $options List of options for this API method
      * @return mixed API Response
      */
-    private function __getProfile($options = [])
+    private function _getProfile($options = [])
     {
         $userId = "self";
         if (!empty($options['user_id'])) {
@@ -197,7 +197,7 @@ class InstagramClient
      * @param array $options List of options for this API method
      * @return mixed API Response
      */
-    private function __getMedia($options = [])
+    private function _getMedia($options = [])
     {
         $userId = "self";
         if (!empty($options['user_id'])) {
