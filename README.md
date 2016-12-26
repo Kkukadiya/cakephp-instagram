@@ -120,5 +120,5 @@ Get the most recent media published by a user. It supports following parameters:
 $instagramClient = new InstagramClient($options);
 $instagramClient->accessToken($accessToken);
 $params = ['count' => 20];
-$response = $instagramClient->getProfile($params);
+$response = $instagramClient->getMedia($params);
 ```
