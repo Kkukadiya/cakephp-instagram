@@ -152,7 +152,7 @@ class InstagramClient
             throw new MissingAccessTokenException();
         }
 
-        $args = !isset($arguments[0]) ? $arguments[0] : [];
+        $args = isset($arguments[0]) ? $arguments[0] : [];
 
         return $this->$methodName($args);
     }
